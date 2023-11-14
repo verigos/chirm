@@ -1,9 +1,9 @@
 {
   "dependencies": {
     "com.meta.xr.simulator": {
-      "version": "file:/Users/kosti/Downloads/package",
+      "version": "file:../meta_xr_simulator_v59/com.meta.xr.simulator-59.0.0.tgz",
       "depth": 0,
-      "source": "local",
+      "source": "local-tarball",
       "dependencies": {}
     },
     "com.unity.collab-proxy": {
