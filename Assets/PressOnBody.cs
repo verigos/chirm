@@ -23,6 +23,7 @@ public class PressOnBody : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
        this.GetComponent<Button>().onClick.Invoke();
+       Debug.Log(other.name);
        /*
        switch (directionSelect){
 
