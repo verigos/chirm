@@ -9,11 +9,22 @@ public class MoveCubes : MonoBehaviour
     GameObject headset;
     GameObject cube;
     GameObject upCube;
+    GameObject rightCube;
+    GameObject leftCube;
+    GameObject downCube;
+    bool disabled;
+    bool calibrated;
     GameObject toggleButton;
     Vector3 handPosition;
     GameObject[] selectors;
-    int previousBox;
+    public int previousBox;
     bool screenChanged;
+    bool selectorsOff;
+    Vector3 firstCube;
+    Vector3 secondCube;
+    Vector3 thirdCube;
+    Vector3 fourthCube;
+    int count;
 
     
     // Start is called before the first frame update
@@ -21,11 +32,15 @@ public class MoveCubes : MonoBehaviour
     {
        headset = GameObject.Find("/OVRCameraRig/TrackingSpace/CenterEyeAnchor");   
        cube = GameObject.Find("Cube");
+       count = 0;
        upCube = GameObject.Find("/CubeMover/Up");
+       rightCube = GameObject.Find("/CubeMover/Right");
+       leftCube = GameObject.Find("/CubeMover/Left");
+       downCube = GameObject.Find("/CubeMover/Down");
        toggleButton = GameObject.Find("On-body Gestures button");
        selectors = GameObject.FindGameObjectsWithTag("Selector").OrderBy(go => go.name).ToArray();
        screenChanged = false;
-        selectors[0].GetComponent<MeshRenderer>().enabled = true;
+       selectorsOff = GameObject.Find("ToggleGestures").GetComponent<toggleGestures>().disabled;
         previousBox = 0;
         Debug.Log("Previous box: " + previousBox);
         Debug.Log("Selector length: "+ selectors.Length);
@@ -38,24 +53,48 @@ public class MoveCubes : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(cube.GetComponent<GestureRecognizer>().gesture == true){
-            handPosition = cube.GetComponent<GestureRecognizer>().hand;
-            upCube.transform.position = new Vector3 (headset.transform.position.x, (headset.transform.position.y/2), (headset.transform.position.z + handPosition.z +0.2f)); 
-        }else{
-            this.transform.position = new Vector3 (headset.transform.position.x, (headset.transform.position.y/2), (headset.transform.position.z + 0.6f));
-        }
+            
+            calibrated = GameObject.Find("/CubeMover").GetComponent<Calibrate>().calibrated;
+            selectorsOff = false;
+    
+            if(calibrated == true && count == 0){
+                Debug.Log("Inside cubemover");
+                firstCube = GameObject.Find("CubeMover").GetComponent<Calibrate>().firstCube;
+                secondCube = GameObject.Find("CubeMover").GetComponent<Calibrate>().secondCube;
+                thirdCube = GameObject.Find("CubeMover").GetComponent<Calibrate>().thirdCube;
+                fourthCube = GameObject.Find("CubeMover").GetComponent<Calibrate>().fourthCube;
+                upCube.transform.position = firstCube;
+                rightCube.transform.position = secondCube;
+                leftCube.transform.position = thirdCube;
+                downCube.transform.position = fourthCube;
+                count++;
+            
+            }
+            
+            /*if(cube.GetComponent<GestureRecognizer>().gesture == true){
+                handPosition = cube.GetComponent<GestureRecognizer>().hand;
+                upCube.transform.position = new Vector3 (headset.transform.position.x, (headset.transform.position.y/2), (headset.transform.position.z + handPosition.z +0.2f)); 
+            }else{
+                this.transform.position = new Vector3 (headset.transform.position.x, (headset.transform.position.y/2), (headset.transform.position.z + 0.6f));
+            }*/
 
-        if(screenChanged == true){
-            selectors = GameObject.FindGameObjectsWithTag("Selector").OrderBy(go => go.name).ToArray();    
-            previousBox = 0;
-            selectors[0].GetComponent<MeshRenderer>().enabled = true;
-            screenChanged = false;
-        }
-       
-        //this.transform.localEulerAngles = new Vector3(0f, headset.transform.localEulerAngles.y, 0f);
+            if(screenChanged == true){
+                selectors = GameObject.FindGameObjectsWithTag("Selector").OrderBy(go => go.name).ToArray();    
+                previousBox = 0;
+                selectors[0].GetComponent<MeshRenderer>().enabled = true;
+                screenChanged = false;
+            
+            } else if (disabled == true && selectorsOff == false){
+                for(int i = 0; i>selectors.Length; i++){
+                    selectors[i].GetComponent<MeshRenderer>().enabled = false;
+                }
+                selectorsOff = true;
+            }
+
+            
+
     }
-
-    public void Up(){
+        public void Up(){
         Debug.Log("Up");
        if(previousBox > 0 && previousBox-2 >= 0){   
             Debug.Log("Big");
