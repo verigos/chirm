@@ -12,11 +12,6 @@ public class ScreenManager : MonoBehaviour
         screenChanged = false;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void RemoveScreen(GameObject pastScreen){
         pastScreen.SetActive(false);
