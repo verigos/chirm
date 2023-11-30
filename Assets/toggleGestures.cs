@@ -13,6 +13,7 @@ public class toggleGestures : MonoBehaviour
     GameObject[] selectors;
     public GameObject[] newTouchPoints;
     public GameObject[] oldTouchPoints;
+    public GameObject wheelchair;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +45,8 @@ public class toggleGestures : MonoBehaviour
         // Update is called once per frame
     void OnTriggerEnter(Collider other)
         {
+            Debug.Log(other);
+            if(other != wheelchair.GetComponent<BoxCollider>()){
             Debug.Log("Hello it is working");
             if(type.activeSelf == false){
                 Debug.Log("Setting active");
@@ -62,10 +65,11 @@ public class toggleGestures : MonoBehaviour
                     selectors[i].GetComponent<MeshRenderer>().enabled = false;
                 }
             }
-
+            }
         }
 
         void OnTriggerExit(Collider other){
+         if(other != wheelchair.GetComponent<BoxCollider>()){   
             if(type.activeSelf == true){
                 if(type.name == "CubeMover" && otherCubes.activeSelf == true){
                     otherCubes.SetActive(false);
@@ -102,6 +106,6 @@ public class toggleGestures : MonoBehaviour
                 }
             }
         }
-
+        }
 }
 

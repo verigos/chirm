@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ScreenManager : MonoBehaviour
 {
-    public bool screenChanged;    
+    public bool screenChanged;
+    public GameObject screens;
 
 // Start is called before the first frame update
     void Start()
@@ -12,6 +13,15 @@ public class ScreenManager : MonoBehaviour
         screenChanged = false;
     }
 
+    void OnTriggerStay(Collider other){
+        screens.SetActive(true);
+
+    }
+
+    void OnTriggerExit(Collider other){
+        screens.SetActive(false);
+
+    }
 
     public void RemoveScreen(GameObject pastScreen){
         pastScreen.SetActive(false);
