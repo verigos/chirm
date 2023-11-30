@@ -7,7 +7,6 @@ using System.Linq;
 public class MoveCubes : MonoBehaviour
 {
     GameObject headset;
-    GameObject cube;
     GameObject upCube;
     GameObject rightCube;
     GameObject leftCube;
@@ -33,14 +32,13 @@ public class MoveCubes : MonoBehaviour
     void Start()
     {
        headset = GameObject.Find("/OVRCameraRig/TrackingSpace/CenterEyeAnchor");   
-       cube = GameObject.Find("Cube");
        calibrateCount = 0;
        pinchCount = 0;
        pinching = false;
-       upCube = GameObject.Find("/CubeMover/Up");
-       rightCube = GameObject.Find("/CubeMover/Right");
-       leftCube = GameObject.Find("/CubeMover/Left");
-       downCube = GameObject.Find("/CubeMover/Down");
+       upCube = GameObject.Find("" + this.name +"/Up");
+       rightCube = GameObject.Find("" + this.name +"/Right");
+       leftCube = GameObject.Find("" + this.name +"/Left");
+       downCube = GameObject.Find("" + this.name +"/Down");
        toggleButton = GameObject.Find("On-body Gestures button");
        selectors = GameObject.FindGameObjectsWithTag("Selector").OrderBy(go => go.name).ToArray();
        screenChanged = false;
@@ -57,22 +55,33 @@ public class MoveCubes : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+            
+            for (int i = 0; i < selectors.Length; i++){
+                if(selectors[i] != selectors[previousBox]){
+            selectors[i].GetComponent<MeshRenderer>().enabled = false;
+            
+                }
+            }
             pinching = GameObject.Find("/PinchChecker").GetComponent<PinchCheck>().pinching;
-            calibrated = GameObject.Find("/CubeMover").GetComponent<Calibrate>().calibrated;
+            calibrated = GameObject.Find(this.name).GetComponent<Calibrate>().calibrated;
             selectorsOff = false;
     
-            if(calibrated == true && calibrateCount == 0){
+            if(calibrated == true && calibrateCount == 0 && this.name != "CubeFingerMover"){
                 Debug.Log("Inside cubemover");
-                firstCube = GameObject.Find("CubeMover").GetComponent<Calibrate>().firstCube;
-                secondCube = GameObject.Find("CubeMover").GetComponent<Calibrate>().secondCube;
-                thirdCube = GameObject.Find("CubeMover").GetComponent<Calibrate>().thirdCube;
-                fourthCube = GameObject.Find("CubeMover").GetComponent<Calibrate>().fourthCube;
+                firstCube = GameObject.Find(this.name).GetComponent<Calibrate>().firstCube;
+                secondCube = GameObject.Find(this.name).GetComponent<Calibrate>().secondCube;
+                thirdCube = GameObject.Find(this.name).GetComponent<Calibrate>().thirdCube;
+                fourthCube = GameObject.Find(this.name).GetComponent<Calibrate>().fourthCube;
                 upCube.transform.position = firstCube;
                 rightCube.transform.position = secondCube;
                 leftCube.transform.position = thirdCube;
                 downCube.transform.position = fourthCube;
                 calibrateCount++;
             
+            }else if(calibrated == true && calibrateCount == 0 && this.name == "CubeFingerMover"){
+                firstCube = GameObject.Find(this.name).GetComponent<Calibrate>().firstCube;
+                upCube.transform.position = firstCube;
+                calibrateCount = 4;
             }
 
             if(calibrateCount > 0){
@@ -193,7 +202,10 @@ public class MoveCubes : MonoBehaviour
 
 
     public void Confirm(){
-        Debug.Log(selectors[previousBox].transform.parent.name);    
+        Debug.Log(selectors[previousBox].transform.parent.name);
+        for (int i = 0; i < selectors.Length; i++){
+            selectors[i].GetComponent<MeshRenderer>().enabled = false;
+        }
         selectors[previousBox].transform.parent.GetComponent<Button>().onClick.Invoke();
         screenChanged = GameObject.Find("atm").GetComponent<ScreenManager>().screenChanged;
     }

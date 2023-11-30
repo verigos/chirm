@@ -36,7 +36,6 @@ public class PinchCheck : MonoBehaviour
 
     private void CheckPinchState()
     {
-        Debug.Log(pinching);    
 
         bool isIndexFingerPinching = ovrHand.GetFingerIsPinching(OVRHand.HandFinger.Index);
 
